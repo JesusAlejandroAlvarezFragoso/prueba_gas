@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+		<link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+		<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+		<style>
+			#map {
+				height: 300px;
+				width: 100%;
+			}
+			footer > div {
+				width: 100%;
+			}
+		</style>
+	</head>
+<body>
+	<div id="app">
+		<v-app>
+			<v-main>
+				<v-container class="grey lighten-5">
+					<v-card>
+						<v-system-bar class="indigo lighten-4"></v-system-bar>
+						<v-toolbar flat>
+							<v-toolbar-title>Rastreo de precios de gasolinas</v-toolbar-title>
+						</v-toolbar>
+						<v-card-text>
+
+							<v-row v-if="error!=''">
+								<v-col
+									cols="12"
+									md="4">
+									<v-alert
+										dense
+										text
+										type="error">
+										{{error}}
+								    </v-alert>
+								</v-col>
+							</v-row>
+
+							<v-row>
+								<v-col
+									cols="12"
+									md="4">
+									<v-card
+										class="pa-2"
+										outlined
+										tile>
+										<form @submit.prevent="getData">
+											<v-select
+												v-model="browse.state"
+												:items="selects_options.state"
+												item-text="value"
+												item-value="value"
+												label="Estado"
+												@change="getMunics">
+											</v-select>
+											<v-select
+												v-model="browse.munic"
+												:items="selects_options.munic"
+												item-text="value"
+												item-value="value"
+												label="Municipio">
+											</v-select>
+											<v-select
+												v-model="browse.sort"
+												:items="selects_options.sort"
+												item-text="text"
+												item-value="value"
+												label="Orden">
+											</v-select>
+
+											<v-btn
+												class="mr-4"
+												color="primary"
+												:disabled="loading"
+												:loading="loading"
+												@click="getData">
+												Buscar
+											</v-btn>
+											<v-btn @click="clear"
+												:disabled="loading">
+												Limpiar
+											</v-btn>
+										</form>
+									</v-card>
+								</v-col>
+								<v-col
+									cols="12"
+									md="8">
+									<v-card
+										class="pa-2"
+										outlined
+										tile>
+										<div id="map"></div>
+									</v-card>
+									<v-card
+										class="pa-2"
+										outlined
+										tile>
+										<v-data-table
+											:headers="table_headers"
+											:items="data"
+											:items-per-page="5"
+											class="elevation-1"
+											:loading="loading"
+											loading-text="Obteniendo información..."
+											empty-text="Sin resultados">
+										</v-data-table>
+									</v-card>
+								</v-col>
+							</v-row>
+						</v-card-text>
+					</v-card>
+				</v-container>
+			</v-main>
+
+			<v-footer
+				dark
+				padless
+				>
+				<v-card
+					flat
+					tile
+					class="indigo lighten-1 white--text text-center align-content-center"
+					>
+					<v-card-text>
+						<v-btn
+							v-for="icon in icons"
+							:key="icon"
+							class="mx-4 white--text"
+							icon
+							>
+							<v-icon size="24px">
+								{{ icon }}
+							</v-icon>
+						</v-btn>
+					</v-card-text>
+
+					<v-card-text class="white--text pt-0">
+						Muchas gracias por tomarte el tiempo de revisar esta prueba, estoy abierto al feedback.
+					</v-card-text>
+
+					<v-divider></v-divider>
+
+					<v-card-text class="white--text">
+						{{ new Date().getFullYear() }} — <strong>Hecho con el corazón y con Vuetify</strong>
+					</v-card-text>
+				</v-card>
+			</v-footer>
+		</v-app>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+	<script src="https://unpkg.com/@googlemaps/markerclustererplus/dist/index.min.js"></script>
+	<script src="/map.js"></script>
+</body>
+</html>
